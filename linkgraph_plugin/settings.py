@@ -46,7 +46,6 @@ INSTALLED_APPS += [
     'users',
     'django',
     'rest_framework',
-    'oauth2_provider'
 ]
 
 AUTH_USER_MODEL = 'users.User'
