@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <title>Link Graph</title>
+
+
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+            <img width="161" height="37" src="https://linkgraph.io/wp-content/themes/linkgraph-new/img/header/logo.svg"
+                 alt="LinkGraph Logo" itemprop="logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">Grow your Revenue through Transparent &
+                        Results-Driven SEO</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<main class="container mt-5">
+    <div class="bg-light p-5 pb-0 rounded">
+        <form action="data" method="get" onsubmit=" event.preventDefault();  myFunction({% url 'data' %})">
+        <h3>WIX Categories {{ data_to_show }}</h3>
+        <button class="btn btn-sm btn-primary" type="submit">GET Categories</button>
+        </form>
+
+        <div class="mt-2">
+        <textarea id="list-category" class="form-control" rows="3">{}</textarea>
+        </div>
+    </div>
+
+    <div class="bg-light p-5 pb-0 rounded">
+        <form action="list_post" method="get" onsubmit=" event.preventDefault();  ListPost({% url 'list_post' %})">
+        <h3>WIX Posts {{ data_to_show }}</h3>
+        <button class="btn btn-sm btn-primary" type="submit">GET Posts</button>
+
+         <div class="mt-2">
+            <textarea id="list-post" class="form-control" rows="3">{}</textarea>
+         </div>
+        </form>
+    </div>
+
+    <div class="bg-light p-5 rounded">
+        <form action="post_cat" method="get" onsubmit=" event.preventDefault();  PostCat({% url 'post_cat' %})">
+        <h3>WIX Categories (Post Payload) {{ data_to_show }}</h3>
+        <button class="btn btn-sm btn-primary" type="submit">POST Categories</button>
+
+        <div class="mt-2">
+            <textarea rows="3" id="post-cat" class="form-control">{}</textarea>
+        </div>
+        </form>
+    </div>
+</main>
+
+{##}
+{#<div class="container">#}
+{#    <div>#}
+{#        <form action="data" method="get" onsubmit=" event.preventDefault();  myFunction({% url 'data' %})">#}
+{#            <h3>View List Categories {{ data_to_show }}</h3>#}
+{##}
+{#            <button type="submit" class="btn btn-primary"> GET List Categories</button>#}
+{#        </form>#}
+{#    </div>#}
+{#    <div>#}
+{#        <textarea id="list-category" class="form-control"#}
+{#                  id="exampleFormControlTextarea1" rows="3">Click Button to View Data</textarea>#}
+{#    </div>#}
+{##}
+{##}
+{#    <div>#}
+{#        <form action="list_post" method="get" onsubmit=" event.preventDefault();  ListPost({% url 'list_post' %})">#}
+{#            <h3>View List Posts</h3>#}
+{#            <button type="submit" class="btn btn-primary">GET List Posts</button>#}
+{#            <div>#}
+{#                <textarea id="list-post" class="form-control"#}
+{#                          id="exampleFormControlTextarea1" rows="3">Click Button to View Data</textarea>#}
+{#            </div>#}
+{#        </form>#}
+{#    </div>#}
+{##}
+{#    <div>#}
+{#        <form action="post_cat" method="get" onsubmit=" event.preventDefault();  PostCat({% url 'post_cat' %})">#}
+{#            <h3>Categories Post Request</h3>#}
+{#            <button type="submit" class="btn btn-primary">POST Categories</button>#}
+{#            <div>#}
+{#                <textarea rows="3" id="post-cat" class="form-control"#}
+{#                          id="exampleFormControlTextarea1">Click Button to View Data</textarea>#}
+{#            </div>#}
+{#        </form>#}
+{#    </div>#}
+{##}
+{#</div>#}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+
+<script>
+    function myFunction(data) {
+
+        var listCategory = document.getElementById("list-category");
+
+        fetch(data).then((response) => response.json())
+            .then((data) => {
+                console.log(data)
+                listCategory.innerHTML = JSON.stringify(data, null, 2)
+
+            });
+
+    }
+
+
+    function ListPost(data) {
+
+        var listCategory = document.getElementById("list-post");
+
+        fetch(data).then((response) => response.json())
+            .then((data) => {
+                console.log(data)
+                listCategory.innerHTML = JSON.stringify(data, null, 2)
+
+            });
+
+    }
+
+
+    function PostCat(data) {
+
+        var listCategory = document.getElementById("post-cat");
+
+        fetch(data).then((response) => response.json())
+            .then((data) => {
+                console.log(data)
+                listCategory.innerHTML = JSON.stringify(data, null, 2)
+
+            });
+
+    }
+
+</script>
+
+</body>
+</html>
