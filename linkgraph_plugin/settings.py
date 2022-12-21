@@ -141,7 +141,6 @@ CLIENT_ID = env.str('CLIENT_ID', '')
 CLIENT_SECRET = env.str('CLIENT_SECRET', '')
 REFRESH_TOKEN = env.str('REFRESH_TOKEN', '')
 
-
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_METHODS = [
@@ -164,3 +163,6 @@ CORS_ALLOW_HEADERS = [
     "x-csrftoken",
     "x-requested-with",
 ]
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
