@@ -176,6 +176,51 @@ class WixGetCategoriesViewSet(APIView):
         # return JsonResponse({'post_cat': data_to_show})
 
 
+class WixListUpdateCategoriesViewSet(APIView):
+    # renderer_classes = [TemplateHTMLRenderer]
+
+    def get(self, request):
+        import requests
+        import json
+
+        url = "https://www.wixapis.com/oauth/access"
+
+        payload = json.dumps({
+            "grant_type": "refresh_token",
+            "client_id": settings.CLIENT_ID,
+            "client_secret": settings.CLIENT_SECRET,
+            "refresh_token": settings.REFRESH_TOKEN
+        })
+        headers = {
+            'Content-Type': 'application/json',
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        new_token = response.json()
+        category = 'b968e421-8c4a-40f1-9786-87155d62ff19'
+
+        url = f"https://www.wixapis.com/blog/v3/categories/{category}"
+
+        payload = {
+            "label": "Summer",
+            "description": "Posts about my summer and adventures",
+            "title": "Summer",
+            "category": {"description": "Posts about my summer and adventures"},
+            "fieldMask": {"category": "title"}
+        }
+        headers = {
+            'Authorization': new_token['access_token'],
+            'Accept': 'application/json',
+            'Cookie': 'XSRF-TOKEN=1671128033|Rh5N7XXpQIPm'
+        }
+
+        response = requests.request("PATCH", url, headers=headers, data=payload)
+
+        data_to_show = response.json()
+        return Response(data_to_show)
+
+
 class WixGetCategoriesBySlugViewSet(APIView):
     # renderer_classes = [TemplateHTMLRenderer]
 
