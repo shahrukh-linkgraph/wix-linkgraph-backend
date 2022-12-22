@@ -46,7 +46,13 @@ INSTALLED_APPS += [
     'users',
     'django',
     'rest_framework',
-    'corsheaders'
+    'rest_framework.authtoken',
+    'rest_auth',
+    'rest_auth.registration',
+    'allauth',
+    'allauth.account',
+    'corsheaders',
+    'rest_framework_swagger',
 ]
 
 AUTH_USER_MODEL = 'users.User'
@@ -81,10 +87,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'linkgraph_plugin.wsgi.application'
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
-    ]
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
 }
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
@@ -164,5 +175,4 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
