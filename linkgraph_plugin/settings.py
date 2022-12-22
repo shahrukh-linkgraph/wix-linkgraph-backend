@@ -52,7 +52,6 @@ INSTALLED_APPS += [
     'allauth',
     'allauth.account',
     'corsheaders',
-    'rest_framework_swagger',
 ]
 
 AUTH_USER_MODEL = 'users.User'
