@@ -10,7 +10,8 @@ django-environ = "*"
 django-cors-headers = "*"
 gunicorn = "*"
 requests = "*"
-
+django-allauth = "*"
+django-rest-auth = "*"
 [dev-packages]
 
 [requires]
