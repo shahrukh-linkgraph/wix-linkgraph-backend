@@ -52,6 +52,7 @@ INSTALLED_APPS += [
     'allauth',
     'allauth.account',
     'corsheaders',
+    'whitenoise.runserver_nostatic',
 ]
 
 AUTH_USER_MODEL = 'users.User'
@@ -64,6 +65,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = 'linkgraph_plugin.urls'
@@ -140,13 +143,11 @@ X_FRAME_OPTIONS = "ALLOWALL"
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LOGIN_URL = '/admin/login/'
 CLIENT_ID = env.str('CLIENT_ID', '')
 CLIENT_SECRET = env.str('CLIENT_SECRET', '')
 REFRESH_TOKEN = env.str('REFRESH_TOKEN', '')
@@ -175,3 +176,5 @@ CORS_ALLOW_HEADERS = [
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"

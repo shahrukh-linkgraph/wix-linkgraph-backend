@@ -12,6 +12,8 @@ gunicorn = "*"
 requests = "*"
 django-allauth = "*"
 django-rest-auth = "*"
+whitenoise = "*"
+
 [dev-packages]
 
 [requires]
