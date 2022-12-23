@@ -5,10 +5,9 @@ from allauth.utils import email_address_exists, generate_unique_username
 from allauth.account.adapter import get_adapter
 from allauth.account.utils import setup_user_email
 from rest_framework import serializers
+from users.models import User
 
 from home.models import Wix
-
-User = get_user_model()
 
 
 class SignupSerializer(serializers.ModelSerializer):
@@ -39,7 +38,7 @@ class SignupSerializer(serializers.ModelSerializer):
         if allauth_settings.UNIQUE_EMAIL:
             if email and email_address_exists(email):
                 raise serializers.ValidationError(
-                    _("A user is already registered with this e-mail address."))
+                    "A user is already registered with this e-mail address.")
         return email
 
     def create(self, validated_data):
@@ -67,7 +66,6 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'email', 'name']
-
 
 
 class WixSerializer(serializers.ModelSerializer):
