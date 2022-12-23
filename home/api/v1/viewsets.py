@@ -80,7 +80,7 @@ class WixViewSet(APIView):
 
 
 class WixListPostViewSet(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    # permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         import requests
@@ -102,14 +102,13 @@ class WixListPostViewSet(APIView):
 
         new_token = response.json()
 
-        feature = request.data.get('featured', 'None')
-        categoryIds = request.data.get('categoryIds', 'None')
+        feature = request.data.get('featured', "None")
         headers = {
             'Authorization': new_token["access_token"],
             'Accept': 'application/json',
             'Cookie': 'XSRF-TOKEN=1671128033|Rh5N7XXpQIPm'
         }
-        url = f"https://www.wixapis.com/blog/v3/posts?featured={feature}&categoryIds={categoryIds}"
+        url = f"https://www.wixapis.com/blog/v3/posts?featured={feature}"
         response = requests.request("GET", url, headers=headers)
 
         data_to_show = response.json()
