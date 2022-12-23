@@ -13,6 +13,7 @@ requests = "*"
 django-allauth = "*"
 django-rest-auth = "*"
 whitenoise = "*"
+psycopg2 = "*"
 
 [dev-packages]
 
