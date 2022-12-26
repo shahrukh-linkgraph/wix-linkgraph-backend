@@ -68,9 +68,7 @@ class WixViewSet(APIView):
             'Accept': 'application/json',
             'Cookie': 'XSRF-TOKEN=1671128033|Rh5N7XXpQIPm'
         }
-        paging = request.data.get('paging', 'None')
-        limit = request.data.get('limit', 'None')
-        url = f"https://www.wixapis.com/blog/v3/categories?paging.offset={paging}&paging.limit={limit}"
+        url = "https://www.wixapis.com/blog/v3/categories"
         response = requests.request("GET", url, headers=headers, data=payload)
 
         data_to_show = response.json()
