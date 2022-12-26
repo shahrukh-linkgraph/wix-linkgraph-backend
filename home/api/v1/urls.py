@@ -15,9 +15,9 @@ router.register("login", LoginViewSet, basename="login")
 urlpatterns = [
     path("", include(router.urls)),
     path("", home, name="home"),
-    path("data/", WixViewSet.as_view(), name='data'),
-    path('list_post/', WixListPostViewSet.as_view(), name='list_post'),
-    path('post_cat/', WixListPostCategoriesViewSet.as_view(), name='post_cat'),
-    path('get_category/', WixGetCategoriesViewSet.as_view(), name='get_category'),
-    path('patch_category/', WixListUpdateCategoriesViewSet.as_view(), name='patch_category')
+    path("list_categories/", WixViewSet.as_view(), name='data'),
+    path('list_posts/', WixListPostViewSet.as_view(), name='list_post'),
+    path('post_categories/', WixListPostCategoriesViewSet.as_view(), name='post_cat'),
+    path('get_categories/', WixGetCategoriesViewSet.as_view(), name='get_category'),
+    path('patch_categories/', WixListUpdateCategoriesViewSet.as_view(), name='patch_category')
 ]

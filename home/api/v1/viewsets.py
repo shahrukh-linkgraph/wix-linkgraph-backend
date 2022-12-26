@@ -41,10 +41,9 @@ def home(request):
 
 
 class WixViewSet(APIView):
-    # renderer_classes = [TemplateHTMLRenderer]
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request):
+    def get(self, request):
         import requests
         import json
 
@@ -80,7 +79,7 @@ class WixViewSet(APIView):
 
 
 class WixListPostViewSet(APIView):
-    # permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         import requests
@@ -180,7 +179,7 @@ class WixGetCategoriesViewSet(APIView):
         new_token = response.json()
 
         # categoryId = "b968e421-8c4a-40f1-9786-87155d62ff19"
-        categoryId = request.data.get('categoryId', 'None')
+        categoryId = request.data.get('categoryId', '')
         url = f"https://www.wixapis.com/blog/v3/categories/{categoryId}"
 
         payload = {}
