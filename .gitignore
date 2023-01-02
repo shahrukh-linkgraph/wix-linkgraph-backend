@@ -8,11 +8,7 @@ build/
 *.pbxuser
 .env
 db.sqlite3
-linkgraph_plugin/__pycache__/settings.cpython-38.pyc
-linkgraph_plugin/__pycache__/urls.cpython-38.pyc
-home/__pycache__/urls.cpython-38.pyc
-home/__pycache__/views.cpython-38.pyc
-users/__pycache__/models.cpython-38.pyc
+*.pyc
 !default.pbxuser
 *.mode1v3
 !default.mode1v3
