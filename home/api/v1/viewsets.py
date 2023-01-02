@@ -13,6 +13,7 @@ from home.api.v1.serializers import (
     UserSerializer,
 )
 
+
 class SignupViewSet(ModelViewSet):
     serializer_class = SignupSerializer
     http_method_names = ["post"]
@@ -33,7 +34,6 @@ class LoginViewSet(ViewSet):
         token, created = Token.objects.get_or_create(user=user)
         user_serializer = UserSerializer(user)
         return Response({"token": token.key, "user": user_serializer.data})
-
 
 
 def home(request):
@@ -111,6 +111,46 @@ class WixListPostViewSet(APIView):
         data_to_show = response.json()
         return Response(data_to_show)
         # return JsonResponse({'list_post': data_to_show})
+
+
+class WixListCreateCategoriesViewSet(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        import requests
+        import json
+
+        url = "https://www.wixapis.com/oauth/access"
+
+        payload = json.dumps({
+            "grant_type": "refresh_token",
+            "client_id": settings.CLIENT_ID,
+            "client_secret": settings.CLIENT_SECRET,
+            "refresh_token": settings.REFRESH_TOKEN
+        })
+        headers = {
+            'Content-Type': 'application/json',
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        new_token = response.json()
+
+        import requests
+        import json
+
+        url = "https://www.wixapis.com/blog/v3/categories"
+
+        payload = json.dumps(request.data)
+        headers = {
+            'Authorization': new_token['access_token'],
+            'Content-Type': 'application/json',
+            'Cookie': 'XSRF-TOKEN=1672142769|-9a_FxvDMnoW'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        return Response(response.json())
 
 
 class WixListPostCategoriesViewSet(APIView):
@@ -217,22 +257,19 @@ class WixListUpdateCategoriesViewSet(APIView):
 
         new_token = response.json()
         category = request.data.get('categoryid', '')
-
         url = f"https://www.wixapis.com/blog/v3/categories/{category}"
 
-        payload = request.data
-        try:
-            payload.pop('categoryid')
-        except:
-            pass
+        payload = json.dumps(
+            request.data
+        )
         headers = {
             'Authorization': new_token['access_token'],
             'Accept': 'application/json',
-            'Cookie': 'XSRF-TOKEN=1671128033|Rh5N7XXpQIPm'
+            'Content-Type': 'application/json',
+            'Cookie': 'XSRF-TOKEN=1672142769|-9a_FxvDMnoW'
         }
 
         response = requests.request("PATCH", url, headers=headers, data=payload)
-
         data_to_show = response.json()
         return Response(data_to_show)
 
