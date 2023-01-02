@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from home.api.v1.viewsets import (
     SignupViewSet,
     LoginViewSet, WixViewSet, WixListPostViewSet, WixListPostCategoriesViewSet, WixGetCategoriesViewSet,
-    WixListUpdateCategoriesViewSet,
+    WixListUpdateCategoriesViewSet, WixCreateDraftPostViewSet, WixListCreateCategoriesViewSet,
 )
 from home.views import home
 
