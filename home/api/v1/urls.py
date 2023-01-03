@@ -5,6 +5,7 @@ from home.api.v1.viewsets import (
     SignupViewSet,
     LoginViewSet, WixViewSet, WixListPostViewSet, WixListPostCategoriesViewSet, WixGetCategoriesViewSet,
     WixListUpdateCategoriesViewSet, WixCreateDraftPostViewSet, WixListCreateCategoriesViewSet,
+    WixGetSiteBusinessViewSet, WixListMemberListViewSet, WixGetMemberListViewSet, WixCreateMembersViewSet,
 )
 from home.views import home
 
@@ -21,5 +22,9 @@ urlpatterns = [
     path('create_categories/', WixListCreateCategoriesViewSet.as_view(), name='create_categories'),
     path('get_categories/', WixGetCategoriesViewSet.as_view(), name='get_category'),
     path('patch_categories/', WixListUpdateCategoriesViewSet.as_view(), name='patch_category'),
-    path('create_draft_post/', WixCreateDraftPostViewSet.as_view(), name='create_draft_post')
+    path('create_draft_post/', WixCreateDraftPostViewSet.as_view(), name='create_draft_post'),
+    path('get_site_properties/', WixGetSiteBusinessViewSet.as_view(), name='get_site_properties'),
+    path('list_members/', WixListMemberListViewSet.as_view(), name='list_members'),
+    path('get_members/', WixGetMemberListViewSet.as_view(), name='list_members'),
+    path('create_members/', WixCreateMembersViewSet.as_view(), name='create_members'),
 ]

@@ -311,6 +311,7 @@ class WixGetCategoriesBySlugViewSet(APIView):
         data_to_show = response.json()
         return Response(data_to_show)
 
+
 class WixCreateDraftPostViewSet(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -343,6 +344,152 @@ class WixCreateDraftPostViewSet(APIView):
             'Authorization': new_token['access_token'],
             'Content-Type': 'application/json',
             'Cookie': 'XSRF-TOKEN=1672415706|nnA264JF4vGe'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        data_to_show = response.json()
+        return Response(data_to_show)
+
+
+class WixGetSiteBusinessViewSet(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        import requests
+        import json
+
+        url = "https://www.wixapis.com/oauth/access"
+
+        payload = json.dumps({
+            "grant_type": "refresh_token",
+            "client_id": settings.CLIENT_ID,
+            "client_secret": settings.CLIENT_SECRET,
+            "refresh_token": settings.REFRESH_TOKEN
+        })
+        headers = {
+            'Content-Type': 'application/json',
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        new_token = response.json()
+
+        url = "https://www.wixapis.com/site-properties/v4/properties"
+
+        payload = {}
+        headers = {
+            'Authorization': new_token['access_token'],
+            'Cookie': 'XSRF-TOKEN=1672745828|QSXZP57sbvpN'
+        }
+
+        response = requests.request("GET", url, headers=headers, data=payload)
+
+        data_to_show = response.json()
+        return Response(data_to_show)
+
+class WixListMemberListViewSet(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        import requests
+        import json
+
+        url = "https://www.wixapis.com/oauth/access"
+
+        payload = json.dumps({
+            "grant_type": "refresh_token",
+            "client_id": settings.CLIENT_ID,
+            "client_secret": settings.CLIENT_SECRET,
+            "refresh_token": settings.REFRESH_TOKEN
+        })
+        headers = {
+            'Content-Type': 'application/json',
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        new_token = response.json()
+
+        url = "https://www.wixapis.com/members/v1/members"
+
+        payload = {}
+        headers = {
+            'Authorization': new_token['access_token'],
+            'Cookie': 'XSRF-TOKEN=1672745828|QSXZP57sbvpN'
+        }
+
+        response = requests.request("GET", url, headers=headers, data=payload)
+        data_to_show = response.json()
+        return Response(data_to_show)
+
+
+
+class WixGetMemberListViewSet(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        import requests
+        import json
+
+        url = "https://www.wixapis.com/oauth/access"
+
+        payload = json.dumps({
+            "grant_type": "refresh_token",
+            "client_id": settings.CLIENT_ID,
+            "client_secret": settings.CLIENT_SECRET,
+            "refresh_token": settings.REFRESH_TOKEN
+        })
+        headers = {
+            'Content-Type': 'application/json',
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        new_token = response.json()
+        id = request.data.get('id')
+        url = f"https://www.wixapis.com/members/v1/members/{id}"
+
+        payload = {}
+        headers = {
+            'Authorization': new_token['access_token'],
+            'Cookie': 'XSRF-TOKEN=1672745828|QSXZP57sbvpN'
+        }
+
+        response = requests.request("GET", url, headers=headers, data=payload)
+        data_to_show = response.json()
+        return Response(data_to_show)
+
+
+class WixCreateMembersViewSet(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        import requests
+        import json
+
+        url = "https://www.wixapis.com/oauth/access"
+
+        payload = json.dumps({
+            "grant_type": "refresh_token",
+            "client_id": settings.CLIENT_ID,
+            "client_secret": settings.CLIENT_SECRET,
+            "refresh_token": settings.REFRESH_TOKEN
+        })
+        headers = {
+            'Content-Type': 'application/json',
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        new_token = response.json()
+        url = "https://www.wixapis.com/members/v1/members"
+
+        payload = json.dumps(request.data)
+        headers = {
+            'Authorization': new_token['access_token'],
+            'Content-Type': 'application/json',
+            'Cookie': 'XSRF-TOKEN=1672745828|QSXZP57sbvpN'
         }
 
         response = requests.request("POST", url, headers=headers, data=payload)
