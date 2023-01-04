@@ -582,9 +582,7 @@ class WixAccountLevelSiteProperties(APIView):
 
         url = "https://www.wixapis.com/site-list/v2/sites/query"
 
-        payload = json.dumps({
-            request.data
-        })
+        payload = json.dumps(request.data)
         headers = {
             'Authorization': request.headers['Authorization'],
             'Accept': 'application/json',
