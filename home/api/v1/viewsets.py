@@ -497,3 +497,103 @@ class WixCreateMembersViewSet(APIView):
         data_to_show = response.json()
         return Response(data_to_show)
 
+
+class SearchAtlasRegistrationApi(APIView):
+
+    def post(self, request):
+        import requests
+        import json
+
+        url = "https://api.searchatlas.com/api/customer/account/register/v2/"
+
+        payload = json.dumps(request.data)
+        headers = {
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        print(response.text)
+        return Response(response.json())
+
+class SearchAtlasLoginApi(APIView):
+    def post(self, request):
+        import requests
+        import json
+
+        url = "https://api.searchatlas.com/api/token/"
+
+        payload = json.dumps({
+            "username": "waqarahmedjoyia1995@gmail.com",
+            "password": "password"
+        })
+        headers = {
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        return Response(response.json())
+
+
+class SearchAtlasCreateProjectApi(APIView):
+    def post(self, request):
+
+        try:
+            import requests
+            import json
+
+            url = "https://www.wixapis.com/oauth/access"
+
+            payload = json.dumps({
+                "grant_type": "refresh_token",
+                "client_id": settings.CLIENT_ID,
+                "client_secret": settings.CLIENT_SECRET,
+                "refresh_token": settings.REFRESH_TOKEN
+            })
+            headers = {
+                'Content-Type': 'application/json',
+            }
+
+            response = requests.request("POST", url, headers=headers, data=payload)
+
+            new_token = response.json()
+
+            url = "http://staff.searchenginelabs.test:8000/api/customer/projects/projects/"
+
+            payload = json.dumps(request.data)
+            headers = {
+                'Authorization': new_token['access_token'],
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+
+            response = requests.request("POST", url, headers=headers, data=payload)
+
+            return Response(response.json())
+        except Exception as e:
+            return Response({"error": e.__doc__})
+
+
+class WixAccountLevelSiteProperties(APIView):
+    def post(self, request):
+        import requests
+        import json
+
+        url = "https://www.wixapis.com/site-list/v2/sites/query"
+
+        payload = json.dumps({
+            request.data
+        })
+        headers = {
+            'Authorization': request.headers['Authorization'],
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'wix-account-id': request.headers['Wix-Account-Id'],
+            'Cookie': 'XSRF-TOKEN=1672745828|QSXZP57sbvpN'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        return Response(response.json())
+
