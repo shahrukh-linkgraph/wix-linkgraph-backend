@@ -388,6 +388,7 @@ class WixGetSiteBusinessViewSet(APIView):
         data_to_show = response.json()
         return Response(data_to_show)
 
+
 class WixListMemberListViewSet(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -422,7 +423,6 @@ class WixListMemberListViewSet(APIView):
         response = requests.request("GET", url, headers=headers, data=payload)
         data_to_show = response.json()
         return Response(data_to_show)
-
 
 
 class WixGetMemberListViewSet(APIView):
@@ -516,6 +516,7 @@ class SearchAtlasRegistrationApi(APIView):
         print(response.text)
         return Response(response.json())
 
+
 class SearchAtlasLoginApi(APIView):
     def post(self, request):
         import requests
@@ -592,3 +593,56 @@ class WixAccountLevelSiteProperties(APIView):
 
         return Response(response.json())
 
+
+class CreateCustomerLogin(APIView):
+
+    def post(self, request):
+        import requests
+        import json
+
+        url = "https://api.searchatlas.com/api/token/"
+
+        payload = json.dumps(request.data)
+        header = {
+            'Content-Type': 'application/json'
+        }
+
+        customer_response = requests.request("POST", url, headers=header, data=payload)
+        # retrives the token from customer login api
+
+        url = "https://www.wixapis.com/site-list/v2/sites/query"
+
+        payload = json.dumps(
+            {
+                "query": {
+                    "filter": {"published": "true"}
+                }
+            }
+        )
+        headers = {
+            'Authorization': request.data.get('Authorization'),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'wix-account-id': request.data.get('wix_account_id'),
+            'Cookie': 'XSRF-TOKEN=1672745828|QSXZP57sbvpN'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+        site_url = response.json()['sites'][0]['viewUrl']
+
+        url = "https://api.searchatlas.com/api/customer/projects/projects/"
+
+        payload = json.dumps(
+            {
+                "domain_url": site_url,
+            }
+        )
+        headers = {
+            'Authorization': "Bearer" + " " + customer_response.json()['token'],
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+
+        final_response = requests.request("POST", url, headers=headers, data=payload)
+
+        return Response(final_response.json())
