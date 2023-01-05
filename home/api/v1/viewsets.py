@@ -523,10 +523,7 @@ class SearchAtlasLoginApi(APIView):
 
         url = "https://api.searchatlas.com/api/token/"
 
-        payload = json.dumps({
-            "username": "waqarahmedjoyia1995@gmail.com",
-            "password": "password"
-        })
+        payload = json.dumps(request.data)
         headers = {
             'Content-Type': 'application/json'
         }
