@@ -72,3 +72,11 @@ class WixSerializer(serializers.ModelSerializer):
     class Meta:
         model = Wix
         fields = "__all__"
+
+
+class CreateCustomerLoginSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(required=True)
+    Authorization = serializers.CharField(required=True)
+    wix_account_id = serializers.CharField(required=True)
+

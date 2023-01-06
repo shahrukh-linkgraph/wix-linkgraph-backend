@@ -10,7 +10,7 @@ from rest_framework.response import Response
 
 from home.api.v1.serializers import (
     SignupSerializer,
-    UserSerializer,
+    UserSerializer, CreateCustomerLoginSerializer,
 )
 
 
@@ -73,7 +73,6 @@ class WixViewSet(APIView):
 
         data_to_show = response.json()
         return Response(data_to_show, status=status.HTTP_200_OK)
-        # return JsonResponse({'data': data_to_show})
 
 
 class WixListPostViewSet(APIView):
@@ -109,8 +108,7 @@ class WixListPostViewSet(APIView):
         response = requests.request("GET", url, headers=headers)
 
         data_to_show = response.json()
-        return Response(data_to_show)
-        # return JsonResponse({'list_post': data_to_show})
+        return Response(data_to_show, status=status.HTTP_200_OK)
 
 
 class WixListCreateCategoriesViewSet(APIView):
@@ -136,9 +134,6 @@ class WixListCreateCategoriesViewSet(APIView):
 
         new_token = response.json()
 
-        import requests
-        import json
-
         url = "https://www.wixapis.com/blog/v3/categories"
 
         payload = json.dumps(request.data)
@@ -150,7 +145,7 @@ class WixListCreateCategoriesViewSet(APIView):
 
         response = requests.request("POST", url, headers=headers, data=payload)
 
-        return Response(response.json())
+        return Response(response.json(), status=status.HTTP_201_CREATED)
 
 
 class WixListPostCategoriesViewSet(APIView):
@@ -189,8 +184,7 @@ class WixListPostCategoriesViewSet(APIView):
         response = requests.request("POST", url, headers=headers, data=payload)
 
         data_to_show = response.json()
-        return Response(data_to_show)
-        # return JsonResponse({'post_cat': data_to_show})
+        return Response(data_to_show, status=status.HTTP_201_CREATED)
 
 
 class WixGetCategoriesViewSet(APIView):
@@ -230,8 +224,7 @@ class WixGetCategoriesViewSet(APIView):
         response = requests.request("GET", url, headers=headers, data=payload)
 
         data_to_show = response.json()
-        return Response(data_to_show)
-        # return JsonResponse({'post_cat': data_to_show})
+        return Response(data_to_show, status=status.HTTP_200_OK)
 
 
 class WixListUpdateCategoriesViewSet(APIView):
@@ -271,7 +264,7 @@ class WixListUpdateCategoriesViewSet(APIView):
 
         response = requests.request("PATCH", url, headers=headers, data=payload)
         data_to_show = response.json()
-        return Response(data_to_show)
+        return Response(data_to_show, status=status.HTTP_200_OK)
 
 
 class WixGetCategoriesBySlugViewSet(APIView):
@@ -309,7 +302,7 @@ class WixGetCategoriesBySlugViewSet(APIView):
         response = requests.request("GET", url, headers=headers, data=payload)
 
         data_to_show = response.json()
-        return Response(data_to_show)
+        return Response(data_to_show, status=status.HTTP_200_OK)
 
 
 class WixCreateDraftPostViewSet(APIView):
@@ -349,7 +342,7 @@ class WixCreateDraftPostViewSet(APIView):
         response = requests.request("POST", url, headers=headers, data=payload)
 
         data_to_show = response.json()
-        return Response(data_to_show)
+        return Response(data_to_show, status=status.HTTP_201_CREATED)
 
 
 class WixGetSiteBusinessViewSet(APIView):
@@ -386,7 +379,7 @@ class WixGetSiteBusinessViewSet(APIView):
         response = requests.request("GET", url, headers=headers, data=payload)
 
         data_to_show = response.json()
-        return Response(data_to_show)
+        return Response(data_to_show, status=status.HTTP_200_OK)
 
 
 class WixListMemberListViewSet(APIView):
@@ -422,7 +415,7 @@ class WixListMemberListViewSet(APIView):
 
         response = requests.request("GET", url, headers=headers, data=payload)
         data_to_show = response.json()
-        return Response(data_to_show)
+        return Response(data_to_show, status=status.HTTP_200_OK)
 
 
 class WixGetMemberListViewSet(APIView):
@@ -458,7 +451,7 @@ class WixGetMemberListViewSet(APIView):
 
         response = requests.request("GET", url, headers=headers, data=payload)
         data_to_show = response.json()
-        return Response(data_to_show)
+        return Response(data_to_show, status=status.HTTP_200_OK)
 
 
 class WixCreateMembersViewSet(APIView):
@@ -495,7 +488,7 @@ class WixCreateMembersViewSet(APIView):
         response = requests.request("POST", url, headers=headers, data=payload)
 
         data_to_show = response.json()
-        return Response(data_to_show)
+        return Response(data_to_show, status=status.HTTP_201_CREATED)
 
 
 class SearchAtlasRegistrationApi(APIView):
@@ -513,8 +506,7 @@ class SearchAtlasRegistrationApi(APIView):
 
         response = requests.request("POST", url, headers=headers, data=payload)
 
-        print(response.text)
-        return Response(response.json())
+        return Response(response.json(), status=status.HTTP_201_CREATED)
 
 
 class SearchAtlasLoginApi(APIView):
@@ -531,7 +523,7 @@ class SearchAtlasLoginApi(APIView):
 
         response = requests.request("POST", url, headers=headers, data=payload)
 
-        return Response(response.json())
+        return Response(response.json(), status=status.HTTP_200_OK)
 
 
 class SearchAtlasCreateProjectApi(APIView):
@@ -568,7 +560,7 @@ class SearchAtlasCreateProjectApi(APIView):
 
             response = requests.request("POST", url, headers=headers, data=payload)
 
-            return Response(response.json())
+            return Response(response.json(), status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({"error": e.__doc__})
 
@@ -591,7 +583,7 @@ class WixAccountLevelSiteProperties(APIView):
 
         response = requests.request("POST", url, headers=headers, data=payload)
 
-        return Response(response.json())
+        return Response(response.json(), status=status.HTTP_201_CREATED)
 
 
 class CreateCustomerLogin(APIView):
@@ -599,50 +591,60 @@ class CreateCustomerLogin(APIView):
     def post(self, request):
         import requests
         import json
-
+        """
+            API https://api.searchatlas.com/api/token/ is used to get token from server which is further used to
+            authenticate and create Customer Project
+        """
         url = "https://api.searchatlas.com/api/token/"
 
-        payload = json.dumps(request.data)
-        header = {
-            'Content-Type': 'application/json'
-        }
+        serializer = CreateCustomerLoginSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            header = {
+                'Content-Type': 'application/json'
+            }
 
-        customer_response = requests.request("POST", url, headers=header, data=payload)
-        # retrives the token from customer login api
+            customer_response = requests.request("POST", url, headers=header, data=json.dumps(serializer.data))
+            """
+                API https://www.wixapis.com/site-list/v2/sites/query uses valid Authorization key and wix-account-id
+                to get site properties. Static filter published is passed to get URL of Publish sites
+            """
 
-        url = "https://www.wixapis.com/site-list/v2/sites/query"
+            url = "https://www.wixapis.com/site-list/v2/sites/query"
 
-        payload = json.dumps(
-            {
-                "query": {
-                    "filter": {"published": "true"}
+            payload = json.dumps(
+                {
+                    "query": {
+                        "filter": {"published": "true"}
+                    }
                 }
+            )
+            headers = {
+                'Authorization': request.data.get('Authorization'),
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'wix-account-id': request.data.get('wix_account_id'),
+                'Cookie': 'XSRF-TOKEN=1672745828|QSXZP57sbvpN'
             }
-        )
-        headers = {
-            'Authorization': request.data.get('Authorization'),
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'wix-account-id': request.data.get('wix_account_id'),
-            'Cookie': 'XSRF-TOKEN=1672745828|QSXZP57sbvpN'
-        }
 
-        response = requests.request("POST", url, headers=headers, data=payload)
-        site_url = response.json()['sites'][0]['viewUrl']
+            response = requests.request("POST", url, headers=headers, data=payload)
+            site_url = response.json()['sites'][0]['viewUrl']
+            """
+              https://api.searchatlas.com/api/customer/projects/projects/ API uses Site URL to create project for user,
+              Fields domain_url, competitors and keywords are used to create Project for user
+            """
+            url = "https://api.searchatlas.com/api/customer/projects/projects/"
 
-        url = "https://api.searchatlas.com/api/customer/projects/projects/"
-
-        payload = json.dumps(
-            {
-                "domain_url": site_url,
+            payload = json.dumps(
+                {
+                    "domain_url": site_url,
+                }
+            )
+            headers = {
+                'Authorization': "Bearer" + " " + customer_response.json()['token'],
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
             }
-        )
-        headers = {
-            'Authorization': "Bearer" + " " + customer_response.json()['token'],
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        }
 
-        final_response = requests.request("POST", url, headers=headers, data=payload)
+            final_response = requests.request("POST", url, headers=headers, data=payload)
 
-        return Response(final_response.json())
+            return Response(final_response.json(), status=status.HTTP_201_CREATED)
