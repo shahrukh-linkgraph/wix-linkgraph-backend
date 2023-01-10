@@ -1,3 +1,4 @@
+from allauth.utils import generate_unique_username
 from django.conf import settings
 from django.shortcuts import render
 from rest_framework import permissions, status
@@ -648,3 +649,56 @@ class CreateCustomerLogin(APIView):
             final_response = requests.request("POST", url, headers=headers, data=payload)
 
             return Response(final_response.json(), status=status.HTTP_201_CREATED)
+
+
+class RegisterWithMember(APIView):
+    def post(self, request):
+        import requests
+        import json
+
+        url = "https://www.wixapis.com/oauth/access"
+
+        payload = json.dumps({
+            "grant_type": "refresh_token",
+            "client_id": settings.CLIENT_ID,
+            "client_secret": settings.CLIENT_SECRET,
+            "refresh_token": settings.REFRESH_TOKEN
+        })
+        headers = {
+            'Content-Type': 'application/json',
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        new_token = response.json()
+        id = request.data.get('id')
+        if 'id' not in request.data:
+            return Response(data={"error": "Please provide account id first"})
+        url = f"https://www.wixapis.com/members/v1/members/{id}?fieldSet=FULL"
+
+        payload = {}
+        headers = {
+            'Authorization': new_token['access_token'],
+            'Cookie': 'XSRF-TOKEN=1672745828|QSXZP57sbvpN'
+        }
+
+        response = requests.request("GET", url, headers=headers, data=payload)
+        member_data = response.json()
+        url = "https://api.searchatlas.com/api/customer/account/register/v2/"
+
+        payload = json.dumps(
+            {
+                "contact_name": member_data['member']['contact']['firstName'],
+                "phone_number": member_data['member']['contact']['phones'][0],
+                "email": member_data['member']['loginEmail'],
+                "password": member_data['member']['loginEmail'].split('@')[0],
+                "registration_source": "dashboard_main"
+            }
+        )
+        headers = {
+            'Content-Type': 'application/json'
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+        registration_response = response.json()
+        return Response(registration_response)

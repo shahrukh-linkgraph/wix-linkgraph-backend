@@ -7,7 +7,7 @@ from home.api.v1.viewsets import (
     WixListUpdateCategoriesViewSet, WixCreateDraftPostViewSet, WixListCreateCategoriesViewSet,
     WixGetSiteBusinessViewSet, WixListMemberListViewSet, WixGetMemberListViewSet, WixCreateMembersViewSet,
     SearchAtlasRegistrationApi, SearchAtlasLoginApi, SearchAtlasCreateProjectApi, WixAccountLevelSiteProperties,
-    CreateCustomerLogin,
+    CreateCustomerLogin, RegisterWithMember,
 )
 from home.views import home
 
@@ -33,5 +33,6 @@ urlpatterns = [
     path('customer_login/', SearchAtlasLoginApi.as_view(), name='customer_login'),
     path('create_project/', SearchAtlasCreateProjectApi.as_view(), name='create_project'),
     path('account_level/site_properties/', WixAccountLevelSiteProperties.as_view(), name='account_level'),
-    path('create_customer_login/', CreateCustomerLogin.as_view(), name='newlogincustomer')
+    path('create_customer_login/', CreateCustomerLogin.as_view(), name='newlogincustomer'),
+    path('member_register/', RegisterWithMember.as_view(), name='member_register')
 ]

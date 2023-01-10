@@ -111,11 +111,11 @@ REST_FRAMEWORK = {
 DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': env.str("POSTGRES_DB", "railway"),
-            'USER': env.str("POSTGRES_USER", "postgres"),
-            'PASSWORD': env.str("POSTGRES_PASSWORD", "BjAjnnc7ggIsOJ10H9UI"),
-            'HOST': env.str("PGHOST", "containers-us-west-45.railway.app"),
-            'PORT': 6943,
+            'NAME': env.str("POSTGRES_DB", ""),
+            'USER': env.str("POSTGRES_USER", ""),
+            'PASSWORD': env.str("POSTGRES_PASSWORD", ""),
+            'HOST': env.str("PGHOST", ""),
+            'PORT': env.str("PGPORT", ""),
         }
     }
 # Password validation
