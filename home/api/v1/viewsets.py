@@ -1,5 +1,8 @@
+import uuid
+
 from allauth.utils import generate_unique_username
 from django.conf import settings
+from django.core.mail import send_mail
 from django.shortcuts import render
 from rest_framework import permissions, status
 from rest_framework.authtoken.serializers import AuthTokenSerializer
@@ -442,7 +445,7 @@ class WixGetMemberListViewSet(APIView):
 
         new_token = response.json()
         id = request.data.get('id')
-        url = f"https://www.wixapis.com/members/v1/members/{id}"
+        url = f"https://www.wixapis.com/members/v1/members/{id}?fieldSet=FULL"
 
         payload = {}
         headers = {
@@ -650,6 +653,16 @@ class CreateCustomerLogin(APIView):
 
             return Response(final_response.json(), status=status.HTTP_201_CREATED)
 
+def mail_registration(response):
+    email = response['email']
+    password = response['password']
+    subject = 'Linkgraph'
+    message = f'You have been successfully registered,' \
+              f' Please use email {email}, and password {password} to login'
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [email]
+    send_mail(subject, message, email_from, recipient_list)
+
 
 class RegisterWithMember(APIView):
     def post(self, request):
@@ -688,13 +701,13 @@ class RegisterWithMember(APIView):
                 return Response(response.json())
             member_data = response.json()
             url = "https://api.searchatlas.com/api/customer/account/register/v2/"
-
+            password = str(uuid.uuid1())[0:10]
             payload = json.dumps(
                 {
                     "contact_name": member_data['member']['contact']['firstName'],
                     "phone_number": member_data['member']['contact']['phones'][0],
                     "email": member_data['member']['loginEmail'],
-                    "password": member_data['member']['loginEmail'].split('@')[0],
+                    "password": password,
                     "registration_source": "dashboard_main"
                 }
             )
@@ -704,7 +717,9 @@ class RegisterWithMember(APIView):
 
             response = requests.request("POST", url, headers=headers, data=payload)
             registration_response = response.json()
-            return Response(registration_response)
+            if response.status_code == 201:
+                mail_registration(registration_response)
+                return Response(registration_response)
         except Exception as e:
             return Response({"error": "An uncaught error occurred during registration of account!"})
 
