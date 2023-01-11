@@ -653,52 +653,83 @@ class CreateCustomerLogin(APIView):
 
 class RegisterWithMember(APIView):
     def post(self, request):
-        import requests
-        import json
+        try:
+            import requests
+            import json
 
-        url = "https://www.wixapis.com/oauth/access"
+            url = "https://www.wixapis.com/oauth/access"
 
-        payload = json.dumps({
-            "grant_type": "refresh_token",
-            "client_id": settings.CLIENT_ID,
-            "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": settings.REFRESH_TOKEN
-        })
-        headers = {
-            'Content-Type': 'application/json',
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-
-        new_token = response.json()
-        id = request.data.get('id')
-        if 'id' not in request.data:
-            return Response(data={"error": "Please provide account id first"})
-        url = f"https://www.wixapis.com/members/v1/members/{id}?fieldSet=FULL"
-
-        payload = {}
-        headers = {
-            'Authorization': new_token['access_token'],
-            'Cookie': 'XSRF-TOKEN=1672745828|QSXZP57sbvpN'
-        }
-
-        response = requests.request("GET", url, headers=headers, data=payload)
-        member_data = response.json()
-        url = "https://api.searchatlas.com/api/customer/account/register/v2/"
-
-        payload = json.dumps(
-            {
-                "contact_name": member_data['member']['contact']['firstName'],
-                "phone_number": member_data['member']['contact']['phones'][0],
-                "email": member_data['member']['loginEmail'],
-                "password": member_data['member']['loginEmail'].split('@')[0],
-                "registration_source": "dashboard_main"
+            payload = json.dumps({
+                "grant_type": "refresh_token",
+                "client_id": settings.CLIENT_ID,
+                "client_secret": settings.CLIENT_SECRET,
+                "refresh_token": settings.REFRESH_TOKEN
+            })
+            headers = {
+                'Content-Type': 'application/json',
             }
-        )
-        headers = {
-            'Content-Type': 'application/json'
-        }
 
-        response = requests.request("POST", url, headers=headers, data=payload)
-        registration_response = response.json()
-        return Response(registration_response)
+            response = requests.request("POST", url, headers=headers, data=payload)
+
+            new_token = response.json()
+            id = request.data.get('id')
+            if 'id' not in request.data:
+                return Response(data={"error": "Please provide account id first"})
+            url = f"https://www.wixapis.com/members/v1/members/{id}?fieldSet=FULL"
+
+            payload = {}
+            headers = {
+                'Authorization': new_token['access_token'],
+                'Cookie': 'XSRF-TOKEN=1672745828|QSXZP57sbvpN'
+            }
+
+            response = requests.request("GET", url, headers=headers, data=payload)
+            if response.status_code != 200:
+                return Response(response.json())
+            member_data = response.json()
+            url = "https://api.searchatlas.com/api/customer/account/register/v2/"
+
+            payload = json.dumps(
+                {
+                    "contact_name": member_data['member']['contact']['firstName'],
+                    "phone_number": member_data['member']['contact']['phones'][0],
+                    "email": member_data['member']['loginEmail'],
+                    "password": member_data['member']['loginEmail'].split('@')[0],
+                    "registration_source": "dashboard_main"
+                }
+            )
+            headers = {
+                'Content-Type': 'application/json'
+            }
+
+            response = requests.request("POST", url, headers=headers, data=payload)
+            registration_response = response.json()
+            return Response(registration_response)
+        except Exception as e:
+            return Response({"error": "An uncaught error occurred during registration of account!"})
+
+
+
+# class GetAuthToken(APIView):
+#     def post(self, request):
+#         import requests
+#         import json
+#
+#         url = "https://www.wixapis.com/oauth/access"
+#
+#         payload = json.dumps({
+#             "grant_type": "authorization_code",
+#             "client_id": "7093b52a-c7d7-4b88-83eb-07dda850366b",
+#             "client_secret": "9fba6dcf-4786-4efe-a41d-622cb8b92b01",
+#             "code": request.data.get('token')
+#         })
+#         headers = {
+#             'Content-Type': 'application/json'
+#         }
+#
+#         response = requests.request("POST", url, headers=headers, data=payload)
+#
+#         request.user.refresh_token = response.json()['refresh_token']
+#         request.user.save()
+#         return Response(response.json())
+
