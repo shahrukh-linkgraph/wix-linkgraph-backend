@@ -349,6 +349,44 @@ class WixCreateDraftPostViewSet(APIView):
         return Response(data_to_show, status=status.HTTP_201_CREATED)
 
 
+class WixListDraftPostViewSet(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        import requests
+        import json
+
+        url = "https://www.wixapis.com/oauth/access"
+
+        payload = json.dumps({
+            "grant_type": "refresh_token",
+            "client_id": settings.CLIENT_ID,
+            "client_secret": settings.CLIENT_SECRET,
+            "refresh_token": settings.REFRESH_TOKEN
+        })
+        headers = {
+            'Content-Type': 'application/json',
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        new_token = response.json()
+        status = request.data.get('status', '')
+        url = f"https://www.wixapis.com/blog/v3/draft-posts?status={status}"
+
+        payload = {}
+        headers = {
+            'Authorization': new_token['access_token'],
+            'Content-Type': 'application/json',
+            'Cookie': 'XSRF-TOKEN=1672415706|nnA264JF4vGe'
+        }
+
+        response = requests.request("GET", url, headers=headers, data=payload)
+
+        data_to_show = response.json()
+        return Response(data_to_show)
+
+
 class WixGetSiteBusinessViewSet(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
@@ -653,6 +691,7 @@ class CreateCustomerLogin(APIView):
 
             return Response(final_response.json(), status=status.HTTP_201_CREATED)
 
+
 def mail_registration(response):
     email = response['email']
     password = response['password']
@@ -725,8 +764,6 @@ class RegisterWithMember(APIView):
         except Exception as e:
             return Response({"error": "An uncaught error occurred during registration of account!"})
 
-
-
 # class GetAuthToken(APIView):
 #     def post(self, request):
 #         import requests
@@ -749,4 +786,3 @@ class RegisterWithMember(APIView):
 #         request.user.refresh_token = response.json()['refresh_token']
 #         request.user.save()
 #         return Response(response.json())
-
