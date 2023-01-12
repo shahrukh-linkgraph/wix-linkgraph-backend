@@ -140,14 +140,14 @@ class WixListCreateCategoriesViewSet(APIView):
 
         url = "https://www.wixapis.com/blog/v3/categories"
 
-        payload = json.dumps(request.data)
+        payload1 = json.dumps(request.data)
         headers = {
             'Authorization': new_token['access_token'],
             'Content-Type': 'application/json',
             'Cookie': 'XSRF-TOKEN=1672142769|-9a_FxvDMnoW'
         }
 
-        response = requests.request("POST", url, headers=headers, data=payload)
+        response = requests.request("POST", url, headers=headers, data=payload1)
 
         return Response(response.json(), status=status.HTTP_201_CREATED)
 
@@ -716,10 +716,12 @@ class RegisterWithMember(APIView):
             }
 
             response = requests.request("POST", url, headers=headers, data=payload)
+            if response.status_code == 409:
+                return Response({"message": response.json()['detail']})
             registration_response = response.json()
             if response.status_code == 201:
                 mail_registration(registration_response)
-                return Response(registration_response)
+            return Response(registration_response)
         except Exception as e:
             return Response({"error": "An uncaught error occurred during registration of account!"})
 
