@@ -7,7 +7,7 @@ from home.api.v1.viewsets import (
     WixListUpdateCategoriesViewSet, WixCreateDraftPostViewSet, WixListCreateCategoriesViewSet,
     WixGetSiteBusinessViewSet, WixListMemberListViewSet, WixGetMemberListViewSet, WixCreateMembersViewSet,
     SearchAtlasRegistrationApi, SearchAtlasLoginApi, SearchAtlasCreateProjectApi, WixAccountLevelSiteProperties,
-    CreateCustomerLogin, RegisterWithMember, WixListDraftPostViewSet,
+    CreateCustomerLogin, RegisterWithMember, WixListDraftPostViewSet, GetToken
 )
 from home.views import home
 
@@ -35,5 +35,6 @@ urlpatterns = [
     path('account_level/site_properties/', WixAccountLevelSiteProperties.as_view(), name='account_level'),
     path('create_customer_login/', CreateCustomerLogin.as_view(), name='newlogincustomer'),
     path('member_register/', RegisterWithMember.as_view(), name='member_register'),
-    path('list_draft_post/', WixListDraftPostViewSet.as_view(), name='list_draft_post')
+    path('list_draft_post/', WixListDraftPostViewSet.as_view(), name='list_draft_post'),
+    path('get_token/', GetToken.as_view(), name='get_token'),
 ]

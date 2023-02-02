@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ViewSet
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
-
+from users.models import User
 from home.api.v1.serializers import (
     SignupSerializer,
     UserSerializer, CreateCustomerLoginSerializer,
@@ -57,7 +57,7 @@ class WixViewSet(APIView):
             "grant_type": "refresh_token",
             "client_id": settings.CLIENT_ID,
             "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": settings.REFRESH_TOKEN
+            "refresh_token": request.user.token
         })
         headers = {
             'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ class WixListPostViewSet(APIView):
             "grant_type": "refresh_token",
             "client_id": settings.CLIENT_ID,
             "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": settings.REFRESH_TOKEN
+            "refresh_token": request.user.token
         })
         headers = {
             'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ class WixListCreateCategoriesViewSet(APIView):
             "grant_type": "refresh_token",
             "client_id": settings.CLIENT_ID,
             "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": settings.REFRESH_TOKEN
+            "refresh_token": request.user.token
         })
         headers = {
             'Content-Type': 'application/json',
@@ -165,7 +165,7 @@ class WixListPostCategoriesViewSet(APIView):
             "grant_type": "refresh_token",
             "client_id": settings.CLIENT_ID,
             "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": settings.REFRESH_TOKEN
+            "refresh_token": request.user.token
         })
         headers = {
             'Content-Type': 'application/json',
@@ -204,7 +204,7 @@ class WixGetCategoriesViewSet(APIView):
             "grant_type": "refresh_token",
             "client_id": settings.CLIENT_ID,
             "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": settings.REFRESH_TOKEN
+            "refresh_token": request.user.token
         })
         headers = {
             'Content-Type': 'application/json',
@@ -244,7 +244,7 @@ class WixListUpdateCategoriesViewSet(APIView):
             "grant_type": "refresh_token",
             "client_id": settings.CLIENT_ID,
             "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": settings.REFRESH_TOKEN
+            "refresh_token": request.user.token
         })
         headers = {
             'Content-Type': 'application/json',
@@ -284,7 +284,7 @@ class WixGetCategoriesBySlugViewSet(APIView):
             "grant_type": "refresh_token",
             "client_id": settings.CLIENT_ID,
             "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": settings.REFRESH_TOKEN
+            "refresh_token": request.user.token
         })
         headers = {
             'Content-Type': 'application/json',
@@ -322,7 +322,7 @@ class WixCreateDraftPostViewSet(APIView):
             "grant_type": "refresh_token",
             "client_id": settings.CLIENT_ID,
             "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": settings.REFRESH_TOKEN
+            "refresh_token": request.user.token
         })
         headers = {
             'Content-Type': 'application/json',
@@ -362,7 +362,7 @@ class WixListDraftPostViewSet(APIView):
             "grant_type": "refresh_token",
             "client_id": settings.CLIENT_ID,
             "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": settings.REFRESH_TOKEN
+            "refresh_token": request.user.token
         })
         headers = {
             'Content-Type': 'application/json',
@@ -400,7 +400,7 @@ class WixGetSiteBusinessViewSet(APIView):
             "grant_type": "refresh_token",
             "client_id": settings.CLIENT_ID,
             "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": settings.REFRESH_TOKEN
+            "refresh_token": request.user.token
         })
         headers = {
             'Content-Type': 'application/json',
@@ -437,7 +437,7 @@ class WixListMemberListViewSet(APIView):
             "grant_type": "refresh_token",
             "client_id": settings.CLIENT_ID,
             "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": settings.REFRESH_TOKEN
+            "refresh_token": request.user.token
         })
         headers = {
             'Content-Type': 'application/json',
@@ -473,7 +473,7 @@ class WixGetMemberListViewSet(APIView):
             "grant_type": "refresh_token",
             "client_id": settings.CLIENT_ID,
             "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": settings.REFRESH_TOKEN
+            "refresh_token": request.user.token
         })
         headers = {
             'Content-Type': 'application/json',
@@ -509,7 +509,7 @@ class WixCreateMembersViewSet(APIView):
             "grant_type": "refresh_token",
             "client_id": settings.CLIENT_ID,
             "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": settings.REFRESH_TOKEN
+            "refresh_token": request.user.token
         })
         headers = {
             'Content-Type': 'application/json',
@@ -581,7 +581,7 @@ class SearchAtlasCreateProjectApi(APIView):
                 "grant_type": "refresh_token",
                 "client_id": settings.CLIENT_ID,
                 "client_secret": settings.CLIENT_SECRET,
-                "refresh_token": settings.REFRESH_TOKEN
+                "refresh_token": request.user.token
             })
             headers = {
                 'Content-Type': 'application/json',
@@ -715,7 +715,7 @@ class RegisterWithMember(APIView):
                 "grant_type": "refresh_token",
                 "client_id": settings.CLIENT_ID,
                 "client_secret": settings.CLIENT_SECRET,
-                "refresh_token": settings.REFRESH_TOKEN
+                "refresh_token": request.user.token
             })
             headers = {
                 'Content-Type': 'application/json',
@@ -764,25 +764,88 @@ class RegisterWithMember(APIView):
         except Exception as e:
             return Response({"error": "An uncaught error occurred during registration of account!"})
 
-# class GetAuthToken(APIView):
-#     def post(self, request):
-#         import requests
-#         import json
-#
-#         url = "https://www.wixapis.com/oauth/access"
-#
-#         payload = json.dumps({
-#             "grant_type": "authorization_code",
-#             "client_id": "7093b52a-c7d7-4b88-83eb-07dda850366b",
-#             "client_secret": "9fba6dcf-4786-4efe-a41d-622cb8b92b01",
-#             "code": request.data.get('token')
-#         })
-#         headers = {
-#             'Content-Type': 'application/json'
-#         }
-#
-#         response = requests.request("POST", url, headers=headers, data=payload)
-#
-#         request.user.refresh_token = response.json()['refresh_token']
-#         request.user.save()
-#         return Response(response.json())
+class GetToken(APIView):
+    def post(self, request):
+        if 'token' in request.data:
+            import requests
+            import json
+
+            url = "https://www.wixapis.com/oauth/access"
+
+            payload = json.dumps({
+                "grant_type": "authorization_code",
+                "client_id": settings.CLIENT_ID,
+                "client_secret": settings.CLIENT_SECRET,
+                "code": request.data.get('token')
+            })
+            headers = {
+                'Authorization': "",
+                'Content-Type': 'application/json',
+                'Cookie': 'XSRF-TOKEN=1674905988|UeW4vyx1AKMr'
+            }
+
+            response = requests.request("POST", url, headers=headers, data=payload)
+            if response.status_code == 400:
+                return Response({"error": "Your token is Expired, Please request for new tokwn"})
+
+
+            refresh_token = User.objects.filter(id=self.request.user.id).first().token
+            if refresh_token is None or refresh_token is "":
+                refresh_token = User.objects.get(id=self.request.user.id)
+                refresh_token.token = response.json().get('refresh_token')
+                refresh_token.email = request.user.email
+                refresh_token.save()
+
+            url = "https://www.wixapis.com/oauth/access"
+
+            payload = json.dumps({
+                "grant_type": "refresh_token",
+                "client_id": settings.CLIENT_ID,
+                "client_secret": settings.CLIENT_SECRET,
+                "refresh_token": refresh_token.token
+            })
+            headers = {
+                'Content-Type': 'application/json',
+            }
+
+            response = requests.request("POST", url, headers=headers, data=payload)
+
+
+
+            url = "https://www.wixapis.com/site-properties/v4/properties"
+
+            payload = {}
+            headers = {
+                'Authorization': response.json().get('access_token'),
+                'Cookie': 'XSRF-TOKEN=1672745828|QSXZP57sbvpN'
+            }
+
+            response = requests.request("GET", url, headers=headers, data=payload)
+
+            member_data = response.json()
+            if "email" not in member_data.get("properties"):
+                return Response({"error": "Please Update your Business info or site properties Email"})
+
+            url = "https://api.searchatlas.com/api/customer/account/register/v2/"
+            password = "Pass@123"
+            payload = json.dumps(
+                {
+                    "contact_name": member_data['properties']['email'],
+                    "phone_number": member_data['properties']['phone'],
+                    "email": member_data['properties']['email'],
+                    "password": password,
+                    "registration_source": "dashboard_main"
+                }
+            )
+            headers = {
+                'Content-Type': 'application/json'
+            }
+
+            response = requests.request("POST", url, headers=headers, data=payload)
+            if response.status_code == 409:
+                return Response({"message": response.json()['detail']})
+            registration_response = response.json()
+            if response.status_code == 201:
+                mail_registration(registration_response)
+            return Response(registration_response)
+        return Response(data={"msg": "No token found"})
