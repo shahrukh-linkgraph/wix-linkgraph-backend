@@ -809,7 +809,7 @@ class GetToken(APIView):
                 "grant_type": "refresh_token",
                 "client_id": settings.CLIENT_ID,
                 "client_secret": settings.CLIENT_SECRET,
-                "refresh_token": refresh_token.token
+                "refresh_token": refresh_token.token if not refresh_token else refresh_token
             })
             headers = {
                 'Content-Type': 'application/json',
