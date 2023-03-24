@@ -4,7 +4,7 @@ from allauth.utils import generate_unique_username
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import render
-from rest_framework import permissions, status
+from rest_framework import permissions
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
@@ -12,6 +12,9 @@ from rest_framework.viewsets import ModelViewSet, ViewSet
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from users.models import User
+import requests
+import json
+from rest_framework import status
 from home.api.v1.serializers import (
     SignupSerializer,
     UserSerializer, CreateCustomerLoginSerializer,
@@ -48,10 +51,11 @@ class WixViewSet(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        import requests
-        import json
-
         url = "https://www.wixapis.com/oauth/access"
+
+        if request.user.token is None:
+            return Response({"error": "You dont have access to view this page, Please signup to continue"},
+                            status=status.HTTP_400_BAD_REQUEST)
 
         payload = json.dumps({
             "grant_type": "refresh_token",
@@ -88,6 +92,10 @@ class WixListPostViewSet(APIView):
 
         url = "https://www.wixapis.com/oauth/access"
 
+        if request.user.token is None:
+            return Response({"error": "You dont have access to view this page, Please signup to continue",
+                             "code": status.HTTP_400_BAD_REQUEST})
+
         payload = json.dumps({
             "grant_type": "refresh_token",
             "client_id": settings.CLIENT_ID,
@@ -119,10 +127,11 @@ class WixListCreateCategoriesViewSet(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        import requests
-        import json
-
         url = "https://www.wixapis.com/oauth/access"
+
+        if request.user.token is None:
+            return Response({"error": "You dont have access to view this page, Please signup to continue",
+                             "code": status.HTTP_400_BAD_REQUEST})
 
         payload = json.dumps({
             "grant_type": "refresh_token",
@@ -156,10 +165,11 @@ class WixListPostCategoriesViewSet(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        import requests
-        import json
-
         url = "https://www.wixapis.com/oauth/access"
+
+        if request.user.token is None:
+            return Response({"error": "You dont have access to view this page, Please signup to continue",
+                             "code": status.HTTP_400_BAD_REQUEST})
 
         payload = json.dumps({
             "grant_type": "refresh_token",
@@ -195,10 +205,11 @@ class WixGetCategoriesViewSet(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        import requests
-        import json
-
         url = "https://www.wixapis.com/oauth/access"
+
+        if request.user.token is None:
+            return Response({"error": "You dont have access to view this page, Please signup to continue",
+                             "code": status.HTTP_400_BAD_REQUEST})
 
         payload = json.dumps({
             "grant_type": "refresh_token",
@@ -235,10 +246,11 @@ class WixListUpdateCategoriesViewSet(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def patch(self, request):
-        import requests
-        import json
-
         url = "https://www.wixapis.com/oauth/access"
+
+        if request.user.token is None:
+            return Response({"error": "You dont have access to view this page, Please signup to continue",
+                             "code": status.HTTP_400_BAD_REQUEST})
 
         payload = json.dumps({
             "grant_type": "refresh_token",
@@ -275,10 +287,11 @@ class WixGetCategoriesBySlugViewSet(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        import requests
-        import json
-
         url = "https://www.wixapis.com/oauth/access"
+
+        if request.user.token is None:
+            return Response({"error": "You dont have access to view this page, Please signup to continue",
+                             "code": status.HTTP_400_BAD_REQUEST})
 
         payload = json.dumps({
             "grant_type": "refresh_token",
@@ -313,10 +326,13 @@ class WixCreateDraftPostViewSet(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        import requests
         import json
-
+        import requests
         url = "https://www.wixapis.com/oauth/access"
+
+        if request.user.token is None:
+            return Response({"error": "You dont have access to view this page, Please signup to continue",
+                             "code": status.HTTP_400_BAD_REQUEST})
 
         payload = json.dumps({
             "grant_type": "refresh_token",
@@ -331,9 +347,6 @@ class WixCreateDraftPostViewSet(APIView):
         response = requests.request("POST", url, headers=headers, data=payload)
 
         new_token = response.json()
-        import requests
-        import json
-
         url = "https://www.wixapis.com/blog/v3/draft-posts"
 
         payload = json.dumps(request.data)
@@ -353,10 +366,11 @@ class WixListDraftPostViewSet(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        import requests
-        import json
-
         url = "https://www.wixapis.com/oauth/access"
+
+        if request.user.token is None:
+            return Response({"error": "You dont have access to view this page, Please signup to continue",
+                             "code": 400})
 
         payload = json.dumps({
             "grant_type": "refresh_token",
@@ -391,10 +405,11 @@ class WixGetSiteBusinessViewSet(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        import requests
-        import json
-
         url = "https://www.wixapis.com/oauth/access"
+
+        if request.user.token is None:
+            return Response({"error": "You dont have access to view this page, Please signup to continue",
+                             "code": status.HTTP_400_BAD_REQUEST})
 
         payload = json.dumps({
             "grant_type": "refresh_token",
@@ -428,10 +443,12 @@ class WixListMemberListViewSet(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        import requests
-        import json
-
         url = "https://www.wixapis.com/oauth/access"
+
+        if request.user.token is None:
+            return Response({"error": "You dont have access to view this page, Please signup to continue",
+                             "code": status.HTTP_400_BAD_REQUEST
+                             })
 
         payload = json.dumps({
             "grant_type": "refresh_token",
@@ -464,10 +481,11 @@ class WixGetMemberListViewSet(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        import requests
-        import json
-
         url = "https://www.wixapis.com/oauth/access"
+
+        if request.user.token is None:
+            return Response({"error": "You dont have access to view this page, Please signup to continue",
+                             "code": status.HTTP_400_BAD_REQUEST})
 
         payload = json.dumps({
             "grant_type": "refresh_token",
@@ -500,10 +518,11 @@ class WixCreateMembersViewSet(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        import requests
-        import json
-
         url = "https://www.wixapis.com/oauth/access"
+
+        if request.user.token is None:
+            return Response({"error": "You dont have access to view this page, Please signup to continue",
+                             "code": status.HTTP_400_BAD_REQUEST})
 
         payload = json.dumps({
             "grant_type": "refresh_token",
@@ -536,9 +555,6 @@ class WixCreateMembersViewSet(APIView):
 class SearchAtlasRegistrationApi(APIView):
 
     def post(self, request):
-        import requests
-        import json
-
         url = "https://api.searchatlas.com/api/customer/account/register/v2/"
 
         payload = json.dumps(request.data)
@@ -572,9 +588,6 @@ class SearchAtlasCreateProjectApi(APIView):
     def post(self, request):
 
         try:
-            import requests
-            import json
-
             url = "https://www.wixapis.com/oauth/access"
 
             payload = json.dumps({
@@ -609,10 +622,11 @@ class SearchAtlasCreateProjectApi(APIView):
 
 class WixAccountLevelSiteProperties(APIView):
     def post(self, request):
-        import requests
-        import json
-
         url = "https://www.wixapis.com/site-list/v2/sites/query"
+
+        if request.user.token is None:
+            return Response({"error": "You dont have access to view this page, Please signup to continue",
+                             "code": status.HTTP_400_BAD_REQUEST})
 
         payload = json.dumps(request.data)
         headers = {
@@ -631,8 +645,6 @@ class WixAccountLevelSiteProperties(APIView):
 class CreateCustomerLogin(APIView):
 
     def post(self, request):
-        import requests
-        import json
         """
             API https://api.searchatlas.com/api/token/ is used to get token from server which is further used to
             authenticate and create Customer Project
@@ -706,9 +718,6 @@ def mail_registration(response):
 class RegisterWithMember(APIView):
     def post(self, request):
         try:
-            import requests
-            import json
-
             url = "https://www.wixapis.com/oauth/access"
 
             payload = json.dumps({
@@ -764,12 +773,10 @@ class RegisterWithMember(APIView):
         except Exception as e:
             return Response({"error": "An uncaught error occurred during registration of account!"})
 
+
 class GetToken(APIView):
     def post(self, request):
         if 'token' in request.data:
-            import requests
-            import json
-
             url = "https://www.wixapis.com/oauth/access"
 
             payload = json.dumps({
@@ -786,11 +793,11 @@ class GetToken(APIView):
 
             response = requests.request("POST", url, headers=headers, data=payload)
             if response.status_code == 400:
-                return Response({"error": "Your token is Expired, Please request for new tokwn"})
-
+                return Response({"error": "Your token is Expired, Please request for new token",
+                                 "code": status.HTTP_400_BAD_REQUEST})
 
             refresh_token = User.objects.filter(id=self.request.user.id).first().token
-            if refresh_token is None or refresh_token is "":
+            if refresh_token == None or refresh_token == "":
                 refresh_token = User.objects.get(id=self.request.user.id)
                 refresh_token.token = response.json().get('refresh_token')
                 refresh_token.email = request.user.email
@@ -802,15 +809,13 @@ class GetToken(APIView):
                 "grant_type": "refresh_token",
                 "client_id": settings.CLIENT_ID,
                 "client_secret": settings.CLIENT_SECRET,
-                "refresh_token": refresh_token.token
+                "refresh_token": refresh_token.token if not refresh_token else refresh_token
             })
             headers = {
                 'Content-Type': 'application/json',
             }
 
             response = requests.request("POST", url, headers=headers, data=payload)
-
-
 
             url = "https://www.wixapis.com/site-properties/v4/properties"
 
@@ -824,7 +829,8 @@ class GetToken(APIView):
 
             member_data = response.json()
             if "email" not in member_data.get("properties"):
-                return Response({"error": "Please Update your Business info or site properties Email"})
+                return Response({"error": "Please Update your Business info or site properties Email",
+                                 "code": status.HTTP_400_BAD_REQUEST})
 
             url = "https://api.searchatlas.com/api/customer/account/register/v2/"
             password = "Pass@123"
@@ -843,9 +849,11 @@ class GetToken(APIView):
 
             response = requests.request("POST", url, headers=headers, data=payload)
             if response.status_code == 409:
-                return Response({"message": response.json()['detail']})
+                return Response({"message": response.json()['detail'],
+                                 "code": status.HTTP_409_CONFLICT})
             registration_response = response.json()
             if response.status_code == 201:
                 mail_registration(registration_response)
             return Response(registration_response)
-        return Response(data={"msg": "No token found"})
+        return Response(data={"error": "No token found",
+                              "code": status.HTTP_400_BAD_REQUEST})
