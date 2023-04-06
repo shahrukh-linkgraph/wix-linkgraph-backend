@@ -3,6 +3,7 @@ import uuid
 from allauth.utils import generate_unique_username
 from django.conf import settings
 from django.core.mail import send_mail
+from django.db.models import Q
 from django.shortcuts import render
 from rest_framework import permissions
 from rest_framework.authtoken.serializers import AuthTokenSerializer
@@ -793,23 +794,16 @@ class GetToken(APIView):
 
             response = requests.request("POST", url, headers=headers, data=payload)
             if response.status_code == 400:
-                return Response({"error": "Your token is Expired, Please request for new token",
+                return Response({"message": "Your token is Expired, Please request for new token",
                                  "code": status.HTTP_400_BAD_REQUEST})
-
-            refresh_token = User.objects.filter(id=self.request.user.id).first().token
-            if refresh_token == None or refresh_token == "":
-                refresh_token = User.objects.get(id=self.request.user.id)
-                refresh_token.token = response.json().get('refresh_token')
-                refresh_token.email = request.user.email
-                refresh_token.save()
-
+            rf_token = response.json().get('refresh_token')
             url = "https://www.wixapis.com/oauth/access"
 
             payload = json.dumps({
                 "grant_type": "refresh_token",
                 "client_id": settings.CLIENT_ID,
                 "client_secret": settings.CLIENT_SECRET,
-                "refresh_token": refresh_token.token if not refresh_token else refresh_token
+                "refresh_token": rf_token
             })
             headers = {
                 'Content-Type': 'application/json',
@@ -829,7 +823,7 @@ class GetToken(APIView):
 
             member_data = response.json()
             if "email" not in member_data.get("properties"):
-                return Response({"error": "Please Update your Business info or site properties Email",
+                return Response({"message": "Please Update your Business info or site properties Email",
                                  "code": status.HTTP_400_BAD_REQUEST})
 
             url = "https://api.searchatlas.com/api/customer/account/register/v2/"
@@ -843,6 +837,16 @@ class GetToken(APIView):
                     "registration_source": "dashboard_main"
                 }
             )
+            user_email = User.objects.filter(email=member_data['properties']['email'])
+            if user_email.exists():
+                return Response(data={"message": f"This user email {user_email.first().email} is already registered"})
+            user = User.objects.create(email=member_data['properties']['email'], token=rf_token,
+                                       username=generate_unique_username([
+                                           member_data['properties']['email'],
+                                           'user'
+                                       ]), )
+            user.set_password(password)
+            user.save()
             headers = {
                 'Content-Type': 'application/json'
             }
@@ -855,5 +859,5 @@ class GetToken(APIView):
             if response.status_code == 201:
                 mail_registration(registration_response)
             return Response(registration_response)
-        return Response(data={"error": "No token found",
+        return Response(data={"message": "No token found",
                               "code": status.HTTP_400_BAD_REQUEST})
