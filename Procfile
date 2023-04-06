@@ -1,0 +1,1 @@
+web: gunicorn 'linkgraph_plugin.wsgi'
