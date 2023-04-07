@@ -1,5 +1,5 @@
 import uuid
-
+from home.authentication import WixAuthentication
 from allauth.utils import generate_unique_username
 from django.conf import settings
 from django.core.mail import send_mail
@@ -48,27 +48,15 @@ def home(request):
     return render(request, "home.html")
 
 
-class WixViewSet(APIView):
+class WixViewSet(WixAuthentication, APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        url = "https://www.wixapis.com/oauth/access"
-
         if request.user.token is None:
             return Response({"error": "You dont have access to view this page, Please signup to continue"},
                             status=status.HTTP_400_BAD_REQUEST)
 
-        payload = json.dumps({
-            "grant_type": "refresh_token",
-            "client_id": settings.CLIENT_ID,
-            "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": request.user.token
-        })
-        headers = {
-            'Content-Type': 'application/json',
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
+        response = WixAuthentication.get_wix_authentication(self, refresh_token=request.user.token)
 
         new_token = response.json()
         payload = {}
@@ -84,30 +72,11 @@ class WixViewSet(APIView):
         return Response(data_to_show, status=status.HTTP_200_OK)
 
 
-class WixListPostViewSet(APIView):
+class WixListPostViewSet(APIView, WixAuthentication):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        import requests
-        import json
-
-        url = "https://www.wixapis.com/oauth/access"
-
-        if request.user.token is None:
-            return Response({"error": "You dont have access to view this page, Please signup to continue",
-                             "code": status.HTTP_400_BAD_REQUEST})
-
-        payload = json.dumps({
-            "grant_type": "refresh_token",
-            "client_id": settings.CLIENT_ID,
-            "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": request.user.token
-        })
-        headers = {
-            'Content-Type': 'application/json',
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
+        response = WixAuthentication.get_wix_authentication(self, refresh_token=request.user.token)
 
         new_token = response.json()
 
@@ -124,28 +93,11 @@ class WixListPostViewSet(APIView):
         return Response(data_to_show, status=status.HTTP_200_OK)
 
 
-class WixListCreateCategoriesViewSet(APIView):
+class WixListCreateCategoriesViewSet(APIView, WixAuthentication):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        url = "https://www.wixapis.com/oauth/access"
-
-        if request.user.token is None:
-            return Response({"error": "You dont have access to view this page, Please signup to continue",
-                             "code": status.HTTP_400_BAD_REQUEST})
-
-        payload = json.dumps({
-            "grant_type": "refresh_token",
-            "client_id": settings.CLIENT_ID,
-            "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": request.user.token
-        })
-        headers = {
-            'Content-Type': 'application/json',
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-
+        response = WixAuthentication.get_wix_authentication(self, refresh_token=request.user.token)
         new_token = response.json()
 
         url = "https://www.wixapis.com/blog/v3/categories"
@@ -162,28 +114,11 @@ class WixListCreateCategoriesViewSet(APIView):
         return Response(response.json(), status=status.HTTP_201_CREATED)
 
 
-class WixListPostCategoriesViewSet(APIView):
+class WixListPostCategoriesViewSet(APIView, WixAuthentication):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        url = "https://www.wixapis.com/oauth/access"
-
-        if request.user.token is None:
-            return Response({"error": "You dont have access to view this page, Please signup to continue",
-                             "code": status.HTTP_400_BAD_REQUEST})
-
-        payload = json.dumps({
-            "grant_type": "refresh_token",
-            "client_id": settings.CLIENT_ID,
-            "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": request.user.token
-        })
-        headers = {
-            'Content-Type': 'application/json',
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-
+        response = WixAuthentication.get_wix_authentication(self, refresh_token=request.user.token)
         new_token = response.json()
 
         url = "https://www.wixapis.com/blog/v3/categories/query"
@@ -202,28 +137,11 @@ class WixListPostCategoriesViewSet(APIView):
         return Response(data_to_show, status=status.HTTP_201_CREATED)
 
 
-class WixGetCategoriesViewSet(APIView):
+class WixGetCategoriesViewSet(APIView, WixAuthentication):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        url = "https://www.wixapis.com/oauth/access"
-
-        if request.user.token is None:
-            return Response({"error": "You dont have access to view this page, Please signup to continue",
-                             "code": status.HTTP_400_BAD_REQUEST})
-
-        payload = json.dumps({
-            "grant_type": "refresh_token",
-            "client_id": settings.CLIENT_ID,
-            "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": request.user.token
-        })
-        headers = {
-            'Content-Type': 'application/json',
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-
+        response = WixAuthentication.get_wix_authentication(self, refresh_token=request.user.token)
         new_token = response.json()
 
         # categoryId = "b968e421-8c4a-40f1-9786-87155d62ff19"
@@ -243,27 +161,11 @@ class WixGetCategoriesViewSet(APIView):
         return Response(data_to_show, status=status.HTTP_200_OK)
 
 
-class WixListUpdateCategoriesViewSet(APIView):
+class WixListUpdateCategoriesViewSet(APIView, WixAuthentication):
     permission_classes = [permissions.IsAuthenticated]
 
     def patch(self, request):
-        url = "https://www.wixapis.com/oauth/access"
-
-        if request.user.token is None:
-            return Response({"error": "You dont have access to view this page, Please signup to continue",
-                             "code": status.HTTP_400_BAD_REQUEST})
-
-        payload = json.dumps({
-            "grant_type": "refresh_token",
-            "client_id": settings.CLIENT_ID,
-            "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": request.user.token
-        })
-        headers = {
-            'Content-Type': 'application/json',
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
+        response = WixAuthentication.get_wix_authentication(self, refresh_token=request.user.token)
 
         new_token = response.json()
         category = request.data.get('categoryid', '')
@@ -284,28 +186,11 @@ class WixListUpdateCategoriesViewSet(APIView):
         return Response(data_to_show, status=status.HTTP_200_OK)
 
 
-class WixGetCategoriesBySlugViewSet(APIView):
+class WixGetCategoriesBySlugViewSet(APIView, WixAuthentication):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        url = "https://www.wixapis.com/oauth/access"
-
-        if request.user.token is None:
-            return Response({"error": "You dont have access to view this page, Please signup to continue",
-                             "code": status.HTTP_400_BAD_REQUEST})
-
-        payload = json.dumps({
-            "grant_type": "refresh_token",
-            "client_id": settings.CLIENT_ID,
-            "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": request.user.token
-        })
-        headers = {
-            'Content-Type': 'application/json',
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-
+        response = WixAuthentication.get_wix_authentication(self, refresh_token=request.user.token)
         new_token = response.json()
 
         url = "https://www.wixapis.com/blog/v3/categories/slugs/{slug=test-category}"
@@ -323,30 +208,11 @@ class WixGetCategoriesBySlugViewSet(APIView):
         return Response(data_to_show, status=status.HTTP_200_OK)
 
 
-class WixCreateDraftPostViewSet(APIView):
+class WixCreateDraftPostViewSet(APIView, WixAuthentication):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        import json
-        import requests
-        url = "https://www.wixapis.com/oauth/access"
-
-        if request.user.token is None:
-            return Response({"error": "You dont have access to view this page, Please signup to continue",
-                             "code": status.HTTP_400_BAD_REQUEST})
-
-        payload = json.dumps({
-            "grant_type": "refresh_token",
-            "client_id": settings.CLIENT_ID,
-            "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": request.user.token
-        })
-        headers = {
-            'Content-Type': 'application/json',
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-
+        response = WixAuthentication.get_wix_authentication(self, refresh_token=request.user.token)
         new_token = response.json()
         url = "https://www.wixapis.com/blog/v3/draft-posts"
 
@@ -363,28 +229,11 @@ class WixCreateDraftPostViewSet(APIView):
         return Response(data_to_show, status=status.HTTP_201_CREATED)
 
 
-class WixListDraftPostViewSet(APIView):
+class WixListDraftPostViewSet(APIView, WixAuthentication):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        url = "https://www.wixapis.com/oauth/access"
-
-        if request.user.token is None:
-            return Response({"error": "You dont have access to view this page, Please signup to continue",
-                             "code": 400})
-
-        payload = json.dumps({
-            "grant_type": "refresh_token",
-            "client_id": settings.CLIENT_ID,
-            "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": request.user.token
-        })
-        headers = {
-            'Content-Type': 'application/json',
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-
+        response = WixAuthentication.get_wix_authentication(self, refresh_token=request.user.token)
         new_token = response.json()
         status = request.data.get('status', '')
         url = f"https://www.wixapis.com/blog/v3/draft-posts?status={status}"
@@ -402,28 +251,11 @@ class WixListDraftPostViewSet(APIView):
         return Response(data_to_show)
 
 
-class WixGetSiteBusinessViewSet(APIView):
+class WixGetSiteBusinessViewSet(APIView, WixAuthentication):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        url = "https://www.wixapis.com/oauth/access"
-
-        if request.user.token is None:
-            return Response({"error": "You dont have access to view this page, Please signup to continue",
-                             "code": status.HTTP_400_BAD_REQUEST})
-
-        payload = json.dumps({
-            "grant_type": "refresh_token",
-            "client_id": settings.CLIENT_ID,
-            "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": request.user.token
-        })
-        headers = {
-            'Content-Type': 'application/json',
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-
+        response = WixAuthentication.get_wix_authentication(self, refresh_token=request.user.token)
         new_token = response.json()
 
         url = "https://www.wixapis.com/site-properties/v4/properties"
@@ -440,29 +272,11 @@ class WixGetSiteBusinessViewSet(APIView):
         return Response(data_to_show, status=status.HTTP_200_OK)
 
 
-class WixListMemberListViewSet(APIView):
+class WixListMemberListViewSet(APIView, WixAuthentication):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        url = "https://www.wixapis.com/oauth/access"
-
-        if request.user.token is None:
-            return Response({"error": "You dont have access to view this page, Please signup to continue",
-                             "code": status.HTTP_400_BAD_REQUEST
-                             })
-
-        payload = json.dumps({
-            "grant_type": "refresh_token",
-            "client_id": settings.CLIENT_ID,
-            "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": request.user.token
-        })
-        headers = {
-            'Content-Type': 'application/json',
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-
+        response = WixAuthentication.get_wix_authentication(self, refresh_token=request.user.token)
         new_token = response.json()
 
         url = "https://www.wixapis.com/members/v1/members"
@@ -478,28 +292,11 @@ class WixListMemberListViewSet(APIView):
         return Response(data_to_show, status=status.HTTP_200_OK)
 
 
-class WixGetMemberListViewSet(APIView):
+class WixGetMemberListViewSet(APIView, WixAuthentication):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        url = "https://www.wixapis.com/oauth/access"
-
-        if request.user.token is None:
-            return Response({"error": "You dont have access to view this page, Please signup to continue",
-                             "code": status.HTTP_400_BAD_REQUEST})
-
-        payload = json.dumps({
-            "grant_type": "refresh_token",
-            "client_id": settings.CLIENT_ID,
-            "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": request.user.token
-        })
-        headers = {
-            'Content-Type': 'application/json',
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-
+        response = WixAuthentication.get_wix_authentication(self, refresh_token=request.user.token)
         new_token = response.json()
         id = request.data.get('id')
         url = f"https://www.wixapis.com/members/v1/members/{id}?fieldSet=FULL"
@@ -515,28 +312,11 @@ class WixGetMemberListViewSet(APIView):
         return Response(data_to_show, status=status.HTTP_200_OK)
 
 
-class WixCreateMembersViewSet(APIView):
+class WixCreateMembersViewSet(APIView, WixAuthentication):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
-        url = "https://www.wixapis.com/oauth/access"
-
-        if request.user.token is None:
-            return Response({"error": "You dont have access to view this page, Please signup to continue",
-                             "code": status.HTTP_400_BAD_REQUEST})
-
-        payload = json.dumps({
-            "grant_type": "refresh_token",
-            "client_id": settings.CLIENT_ID,
-            "client_secret": settings.CLIENT_SECRET,
-            "refresh_token": request.user.token
-        })
-        headers = {
-            'Content-Type': 'application/json',
-        }
-
-        response = requests.request("POST", url, headers=headers, data=payload)
-
+        response = WixAuthentication.get_wix_authentication(self, refresh_token=request.user.token)
         new_token = response.json()
         url = "https://www.wixapis.com/members/v1/members"
 
@@ -585,24 +365,11 @@ class SearchAtlasLoginApi(APIView):
         return Response(response.json(), status=status.HTTP_200_OK)
 
 
-class SearchAtlasCreateProjectApi(APIView):
+class SearchAtlasCreateProjectApi(APIView, WixAuthentication):
     def post(self, request):
 
         try:
-            url = "https://www.wixapis.com/oauth/access"
-
-            payload = json.dumps({
-                "grant_type": "refresh_token",
-                "client_id": settings.CLIENT_ID,
-                "client_secret": settings.CLIENT_SECRET,
-                "refresh_token": request.user.token
-            })
-            headers = {
-                'Content-Type': 'application/json',
-            }
-
-            response = requests.request("POST", url, headers=headers, data=payload)
-
+            response = WixAuthentication.get_wix_authentication(self, refresh_token=request.user.token)
             new_token = response.json()
 
             url = "http://staff.searchenginelabs.test:8000/api/customer/projects/projects/"
@@ -621,7 +388,7 @@ class SearchAtlasCreateProjectApi(APIView):
             return Response({"error": e.__doc__})
 
 
-class WixAccountLevelSiteProperties(APIView):
+class WixAccountLevelSiteProperties(APIView, WixAuthentication):
     def post(self, request):
         url = "https://www.wixapis.com/site-list/v2/sites/query"
 
@@ -716,22 +483,10 @@ def mail_registration(response):
     send_mail(subject, message, email_from, recipient_list)
 
 
-class RegisterWithMember(APIView):
+class RegisterWithMember(APIView, WixAuthentication):
     def post(self, request):
         try:
-            url = "https://www.wixapis.com/oauth/access"
-
-            payload = json.dumps({
-                "grant_type": "refresh_token",
-                "client_id": settings.CLIENT_ID,
-                "client_secret": settings.CLIENT_SECRET,
-                "refresh_token": request.user.token
-            })
-            headers = {
-                'Content-Type': 'application/json',
-            }
-
-            response = requests.request("POST", url, headers=headers, data=payload)
+            response = WixAuthentication.get_wix_authentication(self, refresh_token=request.user.token)
 
             new_token = response.json()
             id = request.data.get('id')
@@ -775,41 +530,17 @@ class RegisterWithMember(APIView):
             return Response({"error": "An uncaught error occurred during registration of account!"})
 
 
-class GetToken(APIView):
+
+
+class GetToken(WixAuthentication, APIView):
     def post(self, request):
         if 'token' in request.data:
-            url = "https://www.wixapis.com/oauth/access"
-
-            payload = json.dumps({
-                "grant_type": "authorization_code",
-                "client_id": settings.CLIENT_ID,
-                "client_secret": settings.CLIENT_SECRET,
-                "code": request.data.get('token')
-            })
-            headers = {
-                'Authorization': "",
-                'Content-Type': 'application/json',
-                'Cookie': 'XSRF-TOKEN=1674905988|UeW4vyx1AKMr'
-            }
-
-            response = requests.request("POST", url, headers=headers, data=payload)
+            response = WixAuthentication.get_wix_authentication(self, refresh_token=None)
             if response.status_code == 400:
                 return Response({"message": "Your token is Expired, Please request for new token",
                                  "code": status.HTTP_400_BAD_REQUEST})
-            rf_token = response.json().get('refresh_token')
-            url = "https://www.wixapis.com/oauth/access"
-
-            payload = json.dumps({
-                "grant_type": "refresh_token",
-                "client_id": settings.CLIENT_ID,
-                "client_secret": settings.CLIENT_SECRET,
-                "refresh_token": rf_token
-            })
-            headers = {
-                'Content-Type': 'application/json',
-            }
-
-            response = requests.request("POST", url, headers=headers, data=payload)
+            refresh_token = response.json().get('refresh_token')
+            response = WixAuthentication.get_wix_authentication(self, refresh_token=refresh_token)
 
             url = "https://www.wixapis.com/site-properties/v4/properties"
 
