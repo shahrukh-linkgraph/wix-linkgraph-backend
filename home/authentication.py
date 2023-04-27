@@ -13,7 +13,8 @@ class WixAuthentication:
             "grant_type": "authorization_code" if not refresh_token else 'refresh_token',
             "client_id": settings.CLIENT_ID,
             "client_secret": settings.CLIENT_SECRET,
-            "refresh_token" if refresh_token else "code": refresh_token if refresh_token else self.request.data.get('token')
+            "refresh_token" if refresh_token else "code": refresh_token if refresh_token else self.request.data.get(
+                'token')
         })
         headers = {
             'Authorization': "",
@@ -23,4 +24,3 @@ class WixAuthentication:
 
         response = requests.request("POST", url, headers=headers, data=payload)
         return response
-
