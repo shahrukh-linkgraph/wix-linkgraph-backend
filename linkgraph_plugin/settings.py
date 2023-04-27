@@ -171,4 +171,4 @@ CORS_ALLOW_CREDENTIALS = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-CSRF_TRUSTED_ORIGINS = ['https://wix-linkgraph-backend-production.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://web-production-b4b4.up.railway.app/']
